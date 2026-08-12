@@ -1,0 +1,29 @@
+project_id = "photoactive-portfolio"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+
+[auth.email]
+# ה-API של Supabase נשאר פתוח לשימוש הקוד שלנו (invite-gated ברמת האפליקציה:
+# ללא profile משויך, למשתמש אין גישה לשום דבר — ראה claim_invite ו-middleware).
+enable_signup = true
+enable_confirmations = false
+
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
