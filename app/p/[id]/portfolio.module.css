@@ -103,11 +103,6 @@
   object-fit: cover;
 }
 
-.frameId {
-  font: 700 12px/1 Consolas, "Courier New", monospace;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-}
 .railName {
   font-family: var(--font-heebo), sans-serif;
   font-weight: 900;
@@ -123,16 +118,18 @@
   letter-spacing: 0.05em;
   margin-top: 10px;
 }
+.quoteBlock {
+  padding-top: 20px;
+  border-top: 1px dashed #322e29;
+}
 .quote {
   font-family: var(--font-heebo), sans-serif;
   font-weight: 300;
   font-size: 21px;
   line-height: 1.5;
   color: #e8e4dc;
-  padding-top: 20px;
-  border-top: 1px dashed #322e29;
   letter-spacing: -0.005em;
-  margin: 0;
+  margin: 6px 0 0;
 }
 
 .traitsTitle {
@@ -181,6 +178,22 @@
   border-right: 2px solid var(--accent-deep);
   padding-right: 14px;
   margin: 0;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 14px;
+  color: #c7c0b3;
+}
+.contactList a {
+  color: var(--accent);
+  text-decoration: none;
+  width: fit-content;
+}
+.contactList a:hover {
+  text-decoration: underline;
 }
 
 .strip {

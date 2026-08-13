@@ -91,7 +91,6 @@ export default async function PublicPortfolioPage({
                 />
               </div>
             )}
-            <div className={styles.frameId}>כרטיס תלמיד · 00</div>
             <h1 className={styles.railName}>{student.display_name}</h1>
             <div className={styles.role}>
               פוטואקטיב{age !== null ? ` · גיל ${age}` : ""}
@@ -99,9 +98,12 @@ export default async function PublicPortfolioPage({
           </div>
 
           {student.quote && (
-            <p className={`${styles.quote} ${styles.fadeIn} ${styles.d2}`}>
-              {student.quote}
-            </p>
+            <div className={`${styles.quoteBlock} ${styles.fadeIn} ${styles.d2}`}>
+              <div className={styles.traitsTitle}>
+                מה השינוי שעברתי בפוטואקטיב?
+              </div>
+              <p className={styles.quote}>{student.quote}</p>
+            </div>
           )}
 
           {(student.trait_1 || student.trait_2 || student.trait_3) && (
@@ -123,21 +125,49 @@ export default async function PublicPortfolioPage({
           )}
 
           {student.bio && (
-            <p className={`${styles.bioText} ${styles.fadeIn} ${styles.d3}`}>
-              {student.bio}
-            </p>
+            <div className={`${styles.fadeIn} ${styles.d3}`}>
+              <div className={styles.traitsTitle}>קצת עליי</div>
+              <p className={styles.bioText}>{student.bio}</p>
+            </div>
           )}
 
           {student.work_description && (
-            <p className={`${styles.bioText} ${styles.fadeIn} ${styles.d3}`}>
-              {student.work_description}
-            </p>
+            <div className={`${styles.fadeIn} ${styles.d3}`}>
+              <div className={styles.traitsTitle}>על הסדרה</div>
+              <p className={styles.bioText}>{student.work_description}</p>
+            </div>
           )}
 
           {student.personal_note && (
-            <p className={`${styles.note} ${styles.fadeIn} ${styles.d4}`}>
-              {student.personal_note}
-            </p>
+            <div className={`${styles.fadeIn} ${styles.d4}`}>
+              <div className={styles.traitsTitle}>נעים להכיר</div>
+              <p className={styles.note}>{student.personal_note}</p>
+            </div>
+          )}
+
+          {(student.phone || student.email || student.website_url) && (
+            <div className={`${styles.fadeIn} ${styles.d4}`}>
+              <div className={styles.traitsTitle}>רוצים ליצור איתי קשר?</div>
+              <div className={styles.contactList}>
+                <span>{student.display_name}</span>
+                {student.phone && <span dir="ltr">{student.phone}</span>}
+                {student.email && <span dir="ltr">{student.email}</span>}
+                {student.website_url && (
+                  <a
+                    href={
+                      /^https?:\/\//.test(student.website_url)
+                        ? student.website_url
+                        : `https://${student.website_url}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    dir="ltr"
+                  >
+                    {student.website_url}
+                  </a>
+                )}
+              </div>
+            </div>
           )}
         </aside>
 

@@ -9,6 +9,7 @@ type TextField =
   | "quote"
   | "work_description"
   | "personal_note"
+  | "website_url"
   | "trait_1"
   | "trait_2"
   | "trait_3";
@@ -19,6 +20,7 @@ const FIELDS: { key: TextField; label: string; multiline?: boolean }[] = [
   { key: "quote", label: "ציטוט על הקורס", multiline: true },
   { key: "work_description", label: "הסבר קצר על העבודות", multiline: true },
   { key: "personal_note", label: "טקסט נעים להכיר", multiline: true },
+  { key: "website_url", label: "קישור לאתר אישי (אופציונלי)" },
 ];
 
 const TRAIT_FIELDS: { key: TextField; label: string }[] = [

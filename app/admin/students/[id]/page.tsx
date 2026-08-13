@@ -96,6 +96,7 @@ export default async function AdminStudentReviewPage({
             trait_1: student.trait_1,
             trait_2: student.trait_2,
             trait_3: student.trait_3,
+            website_url: student.website_url,
           }}
         />
       </section>

@@ -63,6 +63,7 @@ export default async function StudentPortalPage() {
             trait_1: student.trait_1,
             trait_2: student.trait_2,
             trait_3: student.trait_3,
+            website_url: student.website_url,
           }}
           initialPhotos={photos ?? []}
           initialProfilePhotoPath={student.profile_photo_path}
