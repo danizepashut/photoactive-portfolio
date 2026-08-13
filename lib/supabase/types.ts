@@ -77,6 +77,7 @@ export interface Database {
           profile_photo_path: string | null;
           birth_year: number | null;
           website_url: string | null;
+          show_contact_info: boolean;
           status: StudentStatus;
           color_hue: number;
           color_variation: number;
@@ -112,6 +113,7 @@ export interface Database {
           profile_photo_path?: string | null;
           birth_year?: number | null;
           website_url?: string | null;
+          show_contact_info?: boolean;
           status?: StudentStatus;
           color_hue?: number;
           color_variation?: number;

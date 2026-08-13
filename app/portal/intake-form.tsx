@@ -5,6 +5,7 @@ import { TextFieldsForm, type TextField } from "@/app/portal/text-fields-form";
 import { PhotoUploader, type PhotoItem } from "@/app/portal/photo-uploader";
 import { ProfilePhotoField } from "@/app/portal/profile-photo-field";
 import { BirthYearField } from "@/app/portal/birth-year-field";
+import { ContactConsentCheckbox } from "@/app/portal/contact-consent-checkbox";
 import { SubmitSection } from "@/app/portal/submit-section";
 import { MIN_PHOTOS, MAX_PHOTOS } from "@/lib/photo-upload";
 
@@ -14,12 +15,14 @@ export function IntakeForm({
   initialPhotos,
   initialProfilePhotoPath,
   initialBirthYear,
+  initialShowContactInfo,
 }: {
   studentId: string;
   initialValues: Record<TextField, string | null>;
   initialPhotos: { id: string; storage_path: string; title: string | null }[];
   initialProfilePhotoPath: string | null;
   initialBirthYear: number | null;
+  initialShowContactInfo: boolean;
 }) {
   const [textValues, setTextValues] = useState<Record<
     TextField,
@@ -29,8 +32,8 @@ export function IntakeForm({
 
   const ready = useMemo(() => {
     if (!textValues || !photos) return false;
-    const allTextFilled = Object.values(textValues).every(
-      (v) => v.trim() !== "",
+    const allTextFilled = Object.entries(textValues).every(
+      ([key, v]) => key === "website_url" || v.trim() !== "",
     );
     const countOk = photos.length >= MIN_PHOTOS && photos.length <= MAX_PHOTOS;
     const allTitled = photos.every(
@@ -63,6 +66,11 @@ export function IntakeForm({
           onChange={setPhotos}
         />
       </section>
+
+      <ContactConsentCheckbox
+        studentId={studentId}
+        initialValue={initialShowContactInfo}
+      />
 
       <SubmitSection ready={ready} />
     </div>
