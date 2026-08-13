@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { STATUS_LABELS, STATUS_COLORS } from "@/lib/student-status";
 import { TextFieldsForm } from "@/app/portal/text-fields-form";
+import { ProfilePhotoField } from "@/app/portal/profile-photo-field";
+import { BirthYearField } from "@/app/portal/birth-year-field";
 import { ReviewPanel } from "@/app/admin/students/[id]/review-panel";
 import { ApproveExtensionButton } from "@/app/admin/students/[id]/approve-extension-button";
 import { BackButton } from "@/app/admin/students/[id]/back-button";
@@ -75,6 +77,14 @@ export default async function AdminStudentReviewPage({
 
       <section className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold">פרטי התלמיד</h2>
+        <ProfilePhotoField
+          studentId={student.id}
+          initialPath={student.profile_photo_path}
+        />
+        <BirthYearField
+          studentId={student.id}
+          initialValue={student.birth_year}
+        />
         <TextFieldsForm
           studentId={student.id}
           initialValues={{

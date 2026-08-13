@@ -87,6 +87,22 @@
   }
 }
 
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1a1917;
+  border: 1px solid #322e29;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  margin-bottom: 18px;
+}
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .frameId {
   font: 700 12px/1 Consolas, "Courier New", monospace;
   letter-spacing: 0.1em;

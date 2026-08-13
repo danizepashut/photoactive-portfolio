@@ -74,6 +74,8 @@ export interface Database {
           trait_1: string | null;
           trait_2: string | null;
           trait_3: string | null;
+          profile_photo_path: string | null;
+          birth_year: number | null;
           status: StudentStatus;
           color_hue: number;
           color_variation: number;
@@ -106,6 +108,8 @@ export interface Database {
           trait_1?: string | null;
           trait_2?: string | null;
           trait_3?: string | null;
+          profile_photo_path?: string | null;
+          birth_year?: number | null;
           status?: StudentStatus;
           color_hue?: number;
           color_variation?: number;
@@ -165,6 +169,8 @@ export interface Database {
           color_variation: number;
           status: StudentStatus;
           published_at: string | null;
+          profile_photo_path: string | null;
+          birth_year: number | null;
         };
         Relationships: [];
       };

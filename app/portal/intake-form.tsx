@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { TextFieldsForm, type TextField } from "@/app/portal/text-fields-form";
 import { PhotoUploader, type PhotoItem } from "@/app/portal/photo-uploader";
+import { ProfilePhotoField } from "@/app/portal/profile-photo-field";
+import { BirthYearField } from "@/app/portal/birth-year-field";
 import { SubmitSection } from "@/app/portal/submit-section";
 import { MIN_PHOTOS, MAX_PHOTOS } from "@/lib/photo-upload";
 
@@ -10,10 +12,14 @@ export function IntakeForm({
   studentId,
   initialValues,
   initialPhotos,
+  initialProfilePhotoPath,
+  initialBirthYear,
 }: {
   studentId: string;
   initialValues: Record<TextField, string | null>;
   initialPhotos: { id: string; storage_path: string; title: string | null }[];
+  initialProfilePhotoPath: string | null;
+  initialBirthYear: number | null;
 }) {
   const [textValues, setTextValues] = useState<Record<
     TextField,
@@ -37,6 +43,11 @@ export function IntakeForm({
     <div className="flex flex-col gap-10">
       <section className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold">פרטים</h2>
+        <ProfilePhotoField
+          studentId={studentId}
+          initialPath={initialProfilePhotoPath}
+        />
+        <BirthYearField studentId={studentId} initialValue={initialBirthYear} />
         <TextFieldsForm
           studentId={studentId}
           initialValues={initialValues}

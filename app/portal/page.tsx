@@ -65,6 +65,8 @@ export default async function StudentPortalPage() {
             trait_3: student.trait_3,
           }}
           initialPhotos={photos ?? []}
+          initialProfilePhotoPath={student.profile_photo_path}
+          initialBirthYear={student.birth_year}
         />
       </div>
     );

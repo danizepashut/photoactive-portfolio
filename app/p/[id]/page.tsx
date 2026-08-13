@@ -55,6 +55,18 @@ export default async function PublicPortfolioPage({
     }),
   );
 
+  let profilePhotoUrl: string | null = null;
+  if (student.profile_photo_path) {
+    const { data } = await supabase.storage
+      .from("portfolio-photos")
+      .createSignedUrl(student.profile_photo_path, 3600);
+    profilePhotoUrl = data?.signedUrl ?? null;
+  }
+
+  const age = student.birth_year
+    ? new Date().getFullYear() - student.birth_year
+    : null;
+
   // הגוון האישי המדויק שהוקצה לתלמיד (אחד מ-18, ראו lib/student-colors.ts).
   // "עמוק" נגזר ממנו ב-CSS (color-mix), לא מוריאציה אחרת של אותו גוון.
   const accent = getStudentColor(student.color_hue, student.color_variation);
@@ -69,9 +81,21 @@ export default async function PublicPortfolioPage({
       <div className={styles.shell}>
         <aside className={styles.rail}>
           <div className={`${styles.fadeIn} ${styles.d1}`}>
+            {profilePhotoUrl && (
+              <div className={styles.avatar}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={profilePhotoUrl}
+                  alt=""
+                  className={styles.avatarImg}
+                />
+              </div>
+            )}
             <div className={styles.frameId}>כרטיס תלמיד · 00</div>
             <h1 className={styles.railName}>{student.display_name}</h1>
-            <div className={styles.role}>פוטואקטיב</div>
+            <div className={styles.role}>
+              פוטואקטיב{age !== null ? ` · גיל ${age}` : ""}
+            </div>
           </div>
 
           {student.quote && (
