@@ -80,13 +80,14 @@ export function StudentsTable({
 
       <div className="overflow-x-auto rounded-lg border border-neutral-200">
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-right">
+          <thead className="bg-neutral-50 text-right text-neutral-600">
             <tr>
               <th className="px-3 py-2">שם</th>
               <th className="px-3 py-2">אימייל</th>
               <th className="px-3 py-2">מחזור</th>
               <th className="px-3 py-2">סטטוס</th>
               <th className="px-3 py-2">הזמנה</th>
+              <th className="px-3 py-2">תיק עבודות</th>
             </tr>
           </thead>
           <tbody>
@@ -120,11 +121,24 @@ export function StudentsTable({
                     inviteTokenUsed={s.invite_token_used}
                   />
                 </td>
+                <td className="px-3 py-2">
+                  {s.status === "published" || s.status === "expired" ? (
+                    <Link
+                      href={`/p/${s.id}`}
+                      target="_blank"
+                      className="text-xs text-neutral-600 underline-offset-2 hover:underline"
+                    >
+                      צפייה בכרטיס ↗
+                    </Link>
+                  ) : (
+                    <span className="text-xs text-neutral-400">—</span>
+                  )}
+                </td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-neutral-500">
+                <td colSpan={6} className="px-3 py-6 text-center text-neutral-500">
                   אין תוצאות.
                 </td>
               </tr>
