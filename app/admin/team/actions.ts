@@ -2,6 +2,14 @@
 
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+
+async function getOrigin() {
+  const h = await headers();
+  const host = h.get("host");
+  const proto = h.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
 
 // עריכת שם מנהל קיים מוגבלת לדני בלבד - לא חלק ממודל ההרשאות השווה בין
 // מנהלים (כל השאר בכוונה זהה), חריג מפורש לפי בקשה כדי שלא כל מנהל יוכל
@@ -39,10 +47,12 @@ export async function inviteAdmin(email: string, fullName: string) {
   if (!trimmedName) return { error: "צריך שם למנהל.", link: null };
 
   const admin = createServiceRoleClient();
+  const origin = await getOrigin();
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: "invite",
     email: trimmed,
+    options: { redirectTo: `${origin}/auth/callback?admin_invite=1` },
   });
 
   if (error || !data.user) {
