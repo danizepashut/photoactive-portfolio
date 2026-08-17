@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getStudentColor } from "@/lib/student-colors";
 import { Gallery, type GalleryPhoto } from "@/app/p/[id]/gallery";
+import { ScrollHelpers } from "@/app/p/[id]/scroll-helpers";
 import styles from "@/app/p/[id]/portfolio.module.css";
 
 export default async function PublicPortfolioPage({
@@ -77,6 +78,7 @@ export default async function PublicPortfolioPage({
 
   return (
     <div className={styles.page} style={accentStyle}>
+      <ScrollHelpers displayName={student.display_name} />
       <div className={styles.glow} />
       <div className={styles.shell}>
         <aside className={styles.rail}>
