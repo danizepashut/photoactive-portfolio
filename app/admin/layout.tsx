@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { LogoutButton } from "@/app/logout-button";
+import { PresenceHeartbeat } from "@/app/admin/presence-heartbeat";
+import { NotificationsBell } from "@/app/admin/notifications-bell";
 
 const NAV = [
   { href: "/admin", label: "דשבורד" },
@@ -14,6 +16,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="min-h-screen">
+      <PresenceHeartbeat />
       <header className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
         <nav className="flex items-center gap-5">
           <span className="font-bold">פוטואקטיב · ניהול</span>
@@ -27,7 +30,10 @@ export default function AdminLayout({
             </Link>
           ))}
         </nav>
-        <LogoutButton />
+        <div className="flex items-center gap-3">
+          <NotificationsBell />
+          <LogoutButton />
+        </div>
       </header>
       <main className="mx-auto max-w-5xl p-6">{children}</main>
     </div>

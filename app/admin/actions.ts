@@ -20,6 +20,13 @@ export async function createCohort(name: string) {
 
   if (error) return { error: "פתיחת המחזור נכשלה." };
 
+  await supabase.rpc("create_notification", {
+    p_kind: "new_cohort",
+    p_title: `נפתח מחזור חדש: ${data.name}`,
+    p_body: null,
+    p_link: `/admin/cohorts/${data.id}`,
+  });
+
   revalidatePath("/admin");
   redirect(`/admin/cohorts/${data.id}`);
 }

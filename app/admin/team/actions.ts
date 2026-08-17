@@ -3,9 +3,11 @@
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function inviteAdmin(email: string) {
+export async function inviteAdmin(email: string, fullName: string) {
   const trimmed = email.trim().toLowerCase();
+  const trimmedName = fullName.trim();
   if (!trimmed) return { error: "צריך כתובת אימייל.", link: null };
+  if (!trimmedName) return { error: "צריך שם למנהל.", link: null };
 
   const admin = createServiceRoleClient();
 
@@ -20,7 +22,7 @@ export async function inviteAdmin(email: string) {
 
   const { error: profileError } = await admin
     .from("profiles")
-    .insert({ id: data.user.id, role: "admin" });
+    .insert({ id: data.user.id, role: "admin", full_name: trimmedName });
 
   if (profileError) {
     await admin.auth.admin.deleteUser(data.user.id);

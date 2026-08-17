@@ -17,14 +17,22 @@ export async function addStudent(
   if (!phone) return { error: "מספר הטלפון לא תקין." };
 
   const supabase = await createClient();
+  const trimmedName = fullName.trim();
   const { error } = await supabase.rpc("admin_create_student", {
     p_cohort_id: cohortId,
-    p_full_name: fullName.trim(),
+    p_full_name: trimmedName,
     p_email: email.trim().toLowerCase(),
     p_phone: phone,
   });
 
   if (error) return { error: "הוספת התלמיד נכשלה." };
+
+  await supabase.rpc("create_notification", {
+    p_kind: "new_student",
+    p_title: `נוסף תלמיד חדש: ${trimmedName}`,
+    p_body: null,
+    p_link: `/admin/cohorts/${cohortId}`,
+  });
 
   revalidatePath(`/admin/cohorts/${cohortId}`);
   return { error: null };
@@ -52,6 +60,16 @@ export async function bulkImportStudents(
     });
 
     results.push({ row, error: error ? "יצירת הרשומה נכשלה" : null });
+  }
+
+  const successCount = results.filter((r) => !r.error).length;
+  if (successCount > 0) {
+    await supabase.rpc("create_notification", {
+      p_kind: "new_students_bulk",
+      p_title: `יובאו ${successCount} תלמידים חדשים`,
+      p_body: null,
+      p_link: `/admin/cohorts/${cohortId}`,
+    });
   }
 
   revalidatePath(`/admin/cohorts/${cohortId}`);

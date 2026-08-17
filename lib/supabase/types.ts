@@ -21,20 +21,50 @@ export interface Database {
           id: string;
           role: UserRole;
           full_name: string | null;
+          last_seen_at: string | null;
+          notify_new_activity: boolean;
           created_at: string;
         };
         Insert: {
           id: string;
           role?: UserRole;
           full_name?: string | null;
+          last_seen_at?: string | null;
+          notify_new_activity?: boolean;
           created_at?: string;
         };
         Update: {
           id?: string;
           role?: UserRole;
           full_name?: string | null;
+          last_seen_at?: string | null;
+          notify_new_activity?: boolean;
           created_at?: string;
         };
+        Relationships: [];
+      };
+      notifications: {
+        Row: {
+          id: string;
+          recipient_id: string;
+          kind: string;
+          title: string;
+          body: string | null;
+          link: string | null;
+          read_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          recipient_id: string;
+          kind: string;
+          title: string;
+          body?: string | null;
+          link?: string | null;
+          read_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["notifications"]["Insert"]>;
         Relationships: [];
       };
       cohorts: {
@@ -245,6 +275,15 @@ export interface Database {
       cron_expire_published_portfolios: {
         Args: Record<string, never>;
         Returns: number;
+      };
+      create_notification: {
+        Args: {
+          p_kind: string;
+          p_title: string;
+          p_body: string | null;
+          p_link: string | null;
+        };
+        Returns: undefined;
       };
     };
     Enums: Record<string, never>;
