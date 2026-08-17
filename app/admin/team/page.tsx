@@ -1,8 +1,10 @@
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { InviteAdminForm } from "@/app/admin/team/invite-admin-form";
 import { RemoveAdminButton } from "@/app/admin/team/remove-admin-button";
+import { EditableAdminName } from "@/app/admin/team/editable-admin-name";
 
 const ONLINE_WINDOW_MS = 60_000;
+const DANI_PROFILE_ID = "37ea9d81-93fb-4ba7-bb95-4405fcd78549";
 
 export default async function TeamPage() {
   const supabase = await createClient();
@@ -60,7 +62,11 @@ export default async function TeamPage() {
                 return (
                   <tr key={a.id} className="border-t border-neutral-200">
                     <td className="px-3 py-2">
-                      {a.full_name ?? "—"}
+                      <EditableAdminName
+                        profileId={a.id}
+                        initialName={a.full_name}
+                        canEdit={currentUser?.id === DANI_PROFILE_ID}
+                      />
                       {a.id === currentUser?.id && (
                         <span className="mr-2 text-xs text-neutral-400">
                           (אתה)

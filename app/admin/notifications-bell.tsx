@@ -20,12 +20,27 @@ function timeAgo(iso: string): string {
 
 export function NotificationsBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [enabled, setEnabled] = useState(false);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("notify_new_activity")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile?.notify_new_activity) return;
+      setEnabled(true);
+
       const { data } = await supabase
         .from("notifications")
         .select("*")
@@ -45,6 +60,8 @@ export function NotificationsBell() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (!enabled) return null;
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;
 
