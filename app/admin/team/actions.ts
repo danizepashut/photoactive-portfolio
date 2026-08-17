@@ -69,7 +69,15 @@ export async function inviteAdmin(email: string, fullName: string) {
   }
 
   revalidatePath("/admin/team");
-  return { error: null, link: data.properties.action_link };
+
+  // עוטפים את קישור ה-verify הגולמי של סופאבייס בדף שלנו (/auth/redirect):
+  // אם הקישור נשלח בוואטסאפ, תצוגה מקדימה שנוצרת בצד שרת (בלי JS) עלולה
+  // "לצרוך" בטעות את הטוקן החד-פעמי לפני שהמנהל בכלל לחץ עליו. הדף שלנו
+  // לא עושה כלום בטעינה רגילה - ההפניה בפועל לסופאבייס קורית רק ב-JS
+  // בצד לקוח, שבוט תצוגה מקדימה אף פעם לא מריץ.
+  const wrappedLink = `${origin}/auth/redirect?token=${encodeURIComponent(data.properties.hashed_token)}&type=invite`;
+
+  return { error: null, link: wrappedLink };
 }
 
 export async function removeAdmin(profileId: string) {
