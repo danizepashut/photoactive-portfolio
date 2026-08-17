@@ -5,7 +5,6 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const token = searchParams.get("token"); // invite token, only present on invite signup
-  const adminInvite = searchParams.get("admin_invite"); // מוגדר רק בקישור הזמנת מנהל
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=missing_code`);
@@ -56,12 +55,6 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (profile?.role === "admin") {
-    // הקישור הגיע מ-generateLink({type: 'invite' | 'recovery'}) - מזהה
-    // את המשתמש ופותח session, אבל לא נותן לו הזדמנות לקבוע סיסמה בשום
-    // מקום. בלי זה הוא נשאר עם חשבון בלי סיסמה ותקוע במסך ההתחברות הרגיל.
-    if (adminInvite) {
-      return NextResponse.redirect(`${origin}/admin/set-password`);
-    }
     return NextResponse.redirect(`${origin}/admin`);
   }
   if (profile?.role === "student") {

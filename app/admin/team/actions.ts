@@ -52,7 +52,7 @@ export async function inviteAdmin(email: string, fullName: string) {
   const { data, error } = await admin.auth.admin.generateLink({
     type: "invite",
     email: trimmed,
-    options: { redirectTo: `${origin}/auth/callback?admin_invite=1` },
+    options: { redirectTo: `${origin}/auth/accept-invite` },
   });
 
   if (error || !data.user) {
