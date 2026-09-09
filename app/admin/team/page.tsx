@@ -112,10 +112,12 @@ export default async function TeamPage() {
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <div className="flex items-center gap-3">
-                        <FreezeAdminButton profileId={a.id} isFrozen={isFrozen} />
-                        <RemoveAdminButton profileId={a.id} />
-                      </div>
+                      {a.id !== currentUser?.id && (
+                        <div className="flex items-center gap-3">
+                          <FreezeAdminButton profileId={a.id} isFrozen={isFrozen} />
+                          <RemoveAdminButton profileId={a.id} />
+                        </div>
+                      )}
                     </td>
                   </tr>
                 );
