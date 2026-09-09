@@ -2,6 +2,7 @@ import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { InviteAdminForm } from "@/app/admin/team/invite-admin-form";
 import { RemoveAdminButton } from "@/app/admin/team/remove-admin-button";
 import { EditableAdminName } from "@/app/admin/team/editable-admin-name";
+import { FreezeAdminButton } from "@/app/admin/team/freeze-admin-button";
 
 const ONLINE_WINDOW_MS = 60_000;
 const DANI_PROFILE_ID = "37ea9d81-93fb-4ba7-bb95-4405fcd78549";
@@ -14,7 +15,7 @@ export default async function TeamPage() {
 
   const { data: admins } = await supabase
     .from("profiles")
-    .select("id, full_name, last_seen_at, created_at")
+    .select("id, full_name, last_seen_at, created_at, frozen_at")
     .eq("role", "admin")
     .order("created_at", { ascending: true });
 
@@ -59,8 +60,14 @@ export default async function TeamPage() {
                 const isOnline =
                   !!a.last_seen_at &&
                   now - new Date(a.last_seen_at).getTime() < ONLINE_WINDOW_MS;
+                const isFrozen = !!a.frozen_at;
                 return (
-                  <tr key={a.id} className="border-t border-neutral-200">
+                  <tr
+                    key={a.id}
+                    className={`border-t border-neutral-200 ${
+                      isFrozen ? "bg-neutral-50 text-neutral-400" : ""
+                    }`}
+                  >
                     <td className="px-3 py-2">
                       <EditableAdminName
                         profileId={a.id}
@@ -75,15 +82,22 @@ export default async function TeamPage() {
                     </td>
                     <td className="px-3 py-2">{a.email}</td>
                     <td className="px-3 py-2">
-                      {a.lastSignInAt ? (
-                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">
-                          התחבר
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                          ממתין להצטרפות
-                        </span>
-                      )}
+                      <span className="flex flex-wrap items-center gap-1.5">
+                        {a.lastSignInAt ? (
+                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">
+                            התחבר
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
+                            ממתין להצטרפות
+                          </span>
+                        )}
+                        {isFrozen && (
+                          <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-xs text-neutral-600">
+                            מוקפא
+                          </span>
+                        )}
+                      </span>
                     </td>
                     <td className="px-3 py-2">
                       <span className="flex items-center gap-1.5">
@@ -98,7 +112,10 @@ export default async function TeamPage() {
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <RemoveAdminButton profileId={a.id} />
+                      <div className="flex items-center gap-3">
+                        <FreezeAdminButton profileId={a.id} isFrozen={isFrozen} />
+                        <RemoveAdminButton profileId={a.id} />
+                      </div>
                     </td>
                   </tr>
                 );

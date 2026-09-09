@@ -80,6 +80,73 @@ export async function inviteAdmin(email: string, fullName: string) {
   return { error: null, link: wrappedLink };
 }
 
+// חסימת התחברות אמיתית דרך מנגנון ה-ban המובנה של Supabase (ban_duration),
+// לא רק דגל תצוגה - כך גם ניסיון התחברות עם סיסמה תקינה נדחה בפועל. הקפאה
+// עדיפה על מחיקה כשמדובר בהשעיה זמנית, כדי לא להקים את המשתמש מחדש.
+const FREEZE_BAN_DURATION = "876000h"; // ~100 שנה, אין ערך "לצמיתות" ב-API
+
+export async function freezeAdmin(profileId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user?.id === profileId) {
+    return { error: "אי אפשר להקפיא את החשבון שאיתו אתה מחובר כרגע." };
+  }
+
+  const { count } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .eq("role", "admin")
+    .is("frozen_at", null);
+
+  if ((count ?? 0) <= 1) {
+    return { error: "לא ניתן להקפיא את המנהל הפעיל האחרון שנותר." };
+  }
+
+  const admin = createServiceRoleClient();
+  const { error: authError } = await admin.auth.admin.updateUserById(profileId, {
+    ban_duration: FREEZE_BAN_DURATION,
+  });
+  if (authError) return { error: "ההקפאה נכשלה." };
+
+  const { error } = await admin
+    .from("profiles")
+    .update({ frozen_at: new Date().toISOString() })
+    .eq("id", profileId);
+
+  if (error) return { error: "ההקפאה נכשלה." };
+
+  revalidatePath("/admin/team");
+  return { error: null };
+}
+
+export async function unfreezeAdmin(profileId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "יש להתחבר." };
+
+  const admin = createServiceRoleClient();
+  const { error: authError } = await admin.auth.admin.updateUserById(profileId, {
+    ban_duration: "none",
+  });
+  if (authError) return { error: "ביטול ההקפאה נכשל." };
+
+  const { error } = await admin
+    .from("profiles")
+    .update({ frozen_at: null })
+    .eq("id", profileId);
+
+  if (error) return { error: "ביטול ההקפאה נכשל." };
+
+  revalidatePath("/admin/team");
+  return { error: null };
+}
+
 export async function removeAdmin(profileId: string) {
   const supabase = await createClient();
   const {

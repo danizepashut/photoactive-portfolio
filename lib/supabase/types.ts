@@ -23,6 +23,7 @@ export interface Database {
           full_name: string | null;
           last_seen_at: string | null;
           notify_new_activity: boolean;
+          frozen_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -31,6 +32,7 @@ export interface Database {
           full_name?: string | null;
           last_seen_at?: string | null;
           notify_new_activity?: boolean;
+          frozen_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -39,6 +41,7 @@ export interface Database {
           full_name?: string | null;
           last_seen_at?: string | null;
           notify_new_activity?: boolean;
+          frozen_at?: string | null;
           created_at?: string;
         };
         Relationships: [];
