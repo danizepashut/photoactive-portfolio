@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { InviteAdminForm } from "@/app/admin/team/invite-admin-form";
 import { RemoveAdminButton } from "@/app/admin/team/remove-admin-button";
@@ -7,11 +8,20 @@ import { FreezeAdminButton } from "@/app/admin/team/freeze-admin-button";
 const ONLINE_WINDOW_MS = 60_000;
 const DANI_PROFILE_ID = "37ea9d81-93fb-4ba7-bb95-4405fcd78549";
 
+// מגבלה זמנית (2026-09): כל עוד אלדד לא סגר רכישה, מסך "צוות" כולו נגיש
+// לדני בלבד - לא רק הפעולות (ראה actions.ts), אלא הדף עצמו. מנהלים אחרים
+// (כרגע מיכאל) מנותבים חזרה לדשבורד. להסיר כשדני יאשר שאלדד רכש.
+const TEAM_PAGE_RESTRICTED_TO_DANI = true;
+
 export default async function TeamPage() {
   const supabase = await createClient();
   const {
     data: { user: currentUser },
   } = await supabase.auth.getUser();
+
+  if (TEAM_PAGE_RESTRICTED_TO_DANI && currentUser?.id !== DANI_PROFILE_ID) {
+    redirect("/admin");
+  }
 
   const { data: admins } = await supabase
     .from("profiles")

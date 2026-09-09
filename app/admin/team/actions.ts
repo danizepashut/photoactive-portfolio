@@ -16,6 +16,20 @@ async function getOrigin() {
 // לשנות שמות של אחרים.
 const DANI_PROFILE_ID = "37ea9d81-93fb-4ba7-bb95-4405fcd78549";
 
+// מגבלה זמנית (2026-09): כל עוד אלדד לא סגר רכישה, מסך ניהול הצוות כולו -
+// גם הפעולות, לא רק ה-UI - מוגבל לדני בלבד. שאר המנהלים (כרגע מיכאל) לא
+// אמורים לנהל הזמנות/הקפאות/הסרות של מנהלים אחרים בשלב הזה. כשדני יאשר
+// שאלדד רכש, אפשר להסיר את הבדיקה הזו מארבע הפעולות שמשתמשות בה.
+const TEAM_ACTIONS_RESTRICTED_TO_DANI = true;
+
+async function requireDani(user: { id: string } | null) {
+  if (!TEAM_ACTIONS_RESTRICTED_TO_DANI) return null;
+  if (user?.id !== DANI_PROFILE_ID) {
+    return "מסך ניהול הצוות זמנית זמין לדני בלבד.";
+  }
+  return null;
+}
+
 export async function updateAdminName(profileId: string, fullName: string) {
   const supabase = await createClient();
   const {
@@ -41,6 +55,13 @@ export async function updateAdminName(profileId: string, fullName: string) {
 }
 
 export async function inviteAdmin(email: string, fullName: string) {
+  const supabase = await createClient();
+  const {
+    data: { user: caller },
+  } = await supabase.auth.getUser();
+  const restrictionError = await requireDani(caller);
+  if (restrictionError) return { error: restrictionError, link: null };
+
   const trimmed = email.trim().toLowerCase();
   const trimmedName = fullName.trim();
   if (!trimmed) return { error: "צריך כתובת אימייל.", link: null };
@@ -91,8 +112,18 @@ export async function freezeAdmin(profileId: string) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const restrictionError = await requireDani(user);
+  if (restrictionError) return { error: restrictionError };
+
   if (user?.id === profileId) {
     return { error: "אי אפשר להקפיא את החשבון שאיתו אתה מחובר כרגע." };
+  }
+
+  // הגנה קבועה, לא קשורה למגבלה הזמנית למעלה: דני נשאר מנהל קבוע במערכת
+  // הזאת עד שהוא עצמו יבקש אחרת בשיחה ישירה - אף מנהל אחר (כולל אלדד,
+  // בעתיד) לא יכול להקפיא את החשבון שלו דרך המסך הזה.
+  if (profileId === DANI_PROFILE_ID) {
+    return { error: "לא ניתן להקפיא את חשבון זה." };
   }
 
   const { count } = await supabase
@@ -128,7 +159,8 @@ export async function unfreezeAdmin(profileId: string) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: "יש להתחבר." };
+  const restrictionError = await requireDani(user);
+  if (restrictionError) return { error: restrictionError };
 
   const admin = createServiceRoleClient();
   const { error: authError } = await admin.auth.admin.updateUserById(profileId, {
@@ -153,8 +185,18 @@ export async function removeAdmin(profileId: string) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const restrictionError = await requireDani(user);
+  if (restrictionError) return { error: restrictionError };
+
   if (user?.id === profileId) {
     return { error: "אי אפשר להסיר את החשבון שאיתו אתה מחובר כרגע." };
+  }
+
+  // הגנה קבועה, לא קשורה למגבלה הזמנית למעלה: דני נשאר מנהל קבוע במערכת
+  // הזאת עד שהוא עצמו יבקש אחרת בשיחה ישירה - אף מנהל אחר (כולל אלדד,
+  // בעתיד) לא יכול להסיר את החשבון שלו דרך המסך הזה.
+  if (profileId === DANI_PROFILE_ID) {
+    return { error: "לא ניתן להסיר את חשבון זה." };
   }
 
   const { count } = await supabase
